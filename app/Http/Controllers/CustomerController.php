@@ -34,7 +34,9 @@ class CustomerController extends Controller
      */
     public function create()
     {
-        return view('Admin.Customers.create');
+        $users = User::All();
+
+        return view('Admin.Customers.create', compact('users'));
     }
 
     /**
@@ -43,7 +45,7 @@ class CustomerController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(User $user,StoreUserRequest $request)
+    public function store(User $user,Request $request)
     {
         if($request->hasFile('picture'))
         {
@@ -59,16 +61,44 @@ class CustomerController extends Controller
             $imageName = "";
         }
 
-        $saved = $user->create(array_merge($request->validate(['name' => 'required', 'email' => 'required|email|unique:users,email',
-            'username' => 'required|unique:users,username', 'gender' => 'required|string', 'phone_number' => 
-            'required|string|unique:customers,phone_number|min:10|max:13']), ['password' => 'test']));
+        if($request->user_id != "")
+        {
+            $request->validate([
+                'phone_number' => 'required|string|unique:customers,phone_number|min:10|max:13', 
+                'gender' => 'required|string', 
+            ]);
 
-        $user_id = $saved->id;
-        $created_by = Auth::user()->id;
+            $user = User::where('id', $request->user_id)->first();
 
-        Customer::create(array_merge($request->only('name', 'email', 'phone_number', 'gender'), ['picture' => $imageName, 
-            'created_by' => $created_by, 'user_id' => $user_id]
-        ));
+            $user_id = $request->user_id;
+            $created_by = Auth::user()->id;
+
+            Customer::create(array_merge($request->only('phone_number', 'gender'), ['picture' => $imageName, 
+                'name' => $user->name, 'email' => $user->email, 'created_by' => $created_by, 'user_id' => $user_id]
+            ));
+        }
+        else
+        {
+            $request->validate([
+                'name' => 'required', 
+                'email' => 'required|email|unique:users,email',
+                'username' => 'required|unique:users,username', 
+                'gender' => 'required|string', 
+                'phone_number' => 'required|string|unique:customers,phone_number|min:10|max:13' 
+            ]);
+
+            $saved = $user->create(array_merge($request->validate(['name' => 'required', 
+                'email' => 'required|email|unique:users,email',
+                'username' => 'required|unique:users,username', 'gender' => 'required|string', 'phone_number' => 
+                'required|string|unique:customers,phone_number|min:10|max:13']), ['password' => 'test']));
+
+            $user_id = $saved->id;
+            $created_by = Auth::user()->id;
+
+            Customer::create(array_merge($request->only('name', 'email', 'phone_number', 'gender'), ['picture' => $imageName, 
+                'created_by' => $created_by, 'user_id' => $user_id]
+            ));
+        }
 
         return redirect()->route('customers.index')->withSuccess(__('Customer created successfully.'));
     }

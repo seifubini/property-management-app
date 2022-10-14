@@ -11,7 +11,7 @@ class ServicePackage extends Model
 
     protected $table = 'service_packages';
 
-    protected $fillable = ['service_id', 'package_code', 'package_description', 'package_status', 'created_by'];
+    protected $fillable = ['package_name', 'service_id', 'package_code', 'package_description', 'package_status', 'created_by'];
 
     public function ServicePackage()
     {

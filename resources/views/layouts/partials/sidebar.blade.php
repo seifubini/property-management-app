@@ -16,51 +16,50 @@
         @auth
         <!--begin::Item-->
         <li class="nav-item mb-5" data-toggle="tooltip" data-placement="right" data-container="body" data-boundary="window" title="Dashboard">
-          <a href="{{ url('/dashboard') }}" class="nav-link btn btn-icon btn-clean btn-icon-white btn-lg active">
+          <a href="{{ url('/dashboard') }}" class="nav-link btn btn-icon btn-clean btn-icon-white btn-lg 
+            {{ (request()->is('dashboard*')) ? 'active' : ''}}">
             <i class="flaticon2-protection icon-lg"></i>
           </a>
         </li>
         <!--end::Item-->
         <!--begin::Item-->
         <li class="nav-item mb-5" data-toggle="tooltip" data-placement="right" data-container="body" data-boundary="window" title="Property Management">
-          <a href="{{ route('properties.index') }}" class="nav-link btn btn-icon btn-icon-white btn-lg" role="button">
-            <i class="flaticon2-list-3 icon-lg"></i>
+          <a href="{{ route('properties.index') }}" class="nav-link btn btn-icon btn-icon-white btn-lg 
+            {{ (request()->is('properties*')) ? 'active' : ''}}" role="button">
+            <i class="flaticon2-graph-1 icon-lg"></i>
           </a>
         </li>
         <!--end::Item-->
         <!--begin::Item-->
         <li class="nav-item mb-5" data-toggle="tooltip" data-placement="right" data-container="body" data-boundary="window" title="Facility Management">
-          <a href="{{ route('facilities.index') }}" class="nav-link btn btn-icon btn-icon-white btn-lg" role="button">
-            <i class="flaticon2-calendar-6 icon-lg"></i>
+          <a href="{{ route('facilities.index') }}" class="nav-link btn btn-icon btn-icon-white btn-lg 
+            {{ (request()->is('facilities*')) ? 'active' : ''}}" role="button">
+            <i class="flaticon2-layers-2 icon-lg"></i>
           </a>
         </li>
         <!--end::Item-->
         @role('administrator')
         <!--begin::Item-->
+        <li class="nav-item mb-5" data-toggle="tooltip" data-placement="right" data-container="body" data-boundary="window" title="Property Features">
+          <a href="{{ url('/property_features') }}" class="nav-link btn btn-icon btn-icon-white btn-lg 
+            {{ (request()->is('property_features*')) ? 'active' : ''}}" role="button">
+            <i class="flaticon2-gear icon-lg"></i>
+          </a>
+        </li>
+        <!--end::Item-->
+        <!--begin::Item-->
         <li class="nav-item mb-5" data-toggle="tooltip" data-placement="right" data-container="body" data-boundary="window" title="Role Management">
-          <a href="{{ route('roles.index') }}" class="nav-link btn btn-icon btn-icon-white btn-lg" role="button">
-            <i class="flaticon2-hourglass-1 icon-lg"></i>
+          <a href="{{ route('roles.index') }}" class="nav-link btn btn-icon btn-icon-white btn-lg 
+            {{ (request()->is('roles*')) ? 'active' : ''}}" role="button">
+            <i class="flaticon2-sheet icon-lg"></i>
           </a>
         </li>
         <!--end::Item-->
         <!--begin::Item-->
         <li class="nav-item mb-5" data-toggle="tooltip" data-placement="right" data-container="body" data-boundary="window" title="User Management">
-          <a href="{{ route('users.index') }}" class="nnav-link btn btn-icon btn-icon-white btn-lg" role="button">
-            <i class="flaticon2-analytics-2 icon-lg"></i>
-          </a>
-        </li>
-        <!--end::Item-->
-        <!--begin::Item-->
-        <li class="nav-item mb-5" data-toggle="tooltip" data-placement="right" data-container="body" data-boundary="window" title="Finance &amp; Accounting">
-          <a href="#" class="nav-link btn btn-icon btn-icon-white btn-hover-text-white btn-lg" data-toggle="tab" data-target="#kt_aside_tab_6" role="tab">
-            <i class="flaticon2-medical-records-1 icon-lg"></i>
-          </a>
-        </li>
-        <!--end::Item-->
-        <!--begin::Item-->
-        <li class="nav-item mb-5" data-toggle="tooltip" data-placement="right" data-container="body" data-boundary="window" title="Finance &amp; Accounting">
-          <a href="#" class="nav-link btn btn-icon btn-icon-white btn-lg" data-toggle="tab" data-target="#kt_aside_tab_6" role="tab">
-            <i class="flaticon2-warning icon-lg"></i>
+          <a href="{{ route('users.index') }}" class="nnav-link btn btn-icon btn-icon-white btn-lg 
+            {{ (request()->is('users*', 'agents*', 'customers*', 'vendors*', 'staffs*')) ? 'active' : ''}}" role="button">
+            <i class="flaticon2-avatar icon-lg"></i>
           </a>
         </li>
         <!--end::Item-->

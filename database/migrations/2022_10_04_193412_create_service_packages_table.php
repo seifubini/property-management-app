@@ -15,9 +15,10 @@ class CreateServicePackagesTable extends Migration
     {
         Schema::create('service_packages', function (Blueprint $table) {
             $table->id();
+            $table->string('package_name');
             $table->string('service_id');
             $table->string('package_code');
-            $table->string('package_description');
+            $table->string('package_description', 500);
             $table->string('created_by');
             $table->string('package_status');
             $table->timestamps();

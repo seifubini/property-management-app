@@ -33,7 +33,9 @@ class StaffController extends Controller
      */
     public function create()
     {
-        return view('Admin.Staffs.create');
+        $users = User::All();
+
+        return view('Admin.Staffs.create', compact('users'));
     }
 
     /**
@@ -42,7 +44,7 @@ class StaffController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(User $user,StoreUserRequest $request)
+    public function store(User $user,Request $request)
     {
         if($request->hasFile('picture'))
         {
@@ -58,17 +60,52 @@ class StaffController extends Controller
             $imageName = "";
         }
 
-        $saved = $user->create(array_merge($request->validate(['name' => 'required', 'email' => 'required|email|unique:users,email',
-            'username' => 'required|unique:users,username', 'gender' => 'required|string', 'phone_number' => 
-            'required|string|unique:customers,phone_number|min:10|max:13']), ['password' => 'test']));
-
-        $user_id = $saved->id;
-        $created_by = Auth::user()->id;
         $id_number = random_int(1000, 9999);
+        $created_by = Auth::user()->id;
 
-        Staff::create(array_merge($request->only('name', 'email', 'phone_number', 'gender', 'position', 'status', 'joining_date'), 
-            ['picture' => $imageName, 'created_by' => $created_by, 'id_number' => $id_number, 'user_id' => $user_id]
-        ));
+        if($request->user_id != "")
+        {
+            $request->validate([
+                'phone_number' => 'required|string|unique:staff,phone_number|min:10|max:13', 
+                'gender' => 'required|string', 
+                'position' => 'required|string',
+                'status' => 'required|string',
+                'joining_date' => 'required|string'
+            ]);
+
+            $user = User::where('id', $request->user_id)->first();
+
+            $user_id = $request->user_id;
+
+            Staff::create(array_merge($request->only('phone_number', 'gender', 'position', 'status', 'joining_date'), 
+                ['picture' => $imageName, 'name' => $user->name, 'email' => $user->email, 'created_by' => $created_by, 
+                'user_id' => $user_id, 'id_number' => $id_number]
+            ));
+        }
+        else
+        {
+            $request->validate([
+                'name' => 'required', 
+                'email' => 'required|email|unique:users,email',
+                'username' => 'required|unique:users,username', 
+                'gender' => 'required|string', 
+                'phone_number' => 'required|string|unique:staff,phone_number|min:10|max:13',
+                'position' => 'required|string',
+                'status' => 'required|string',
+                'joining_date' => 'required|string'
+            ]);
+
+            $saved = $user->create(array_merge($request->validate(['name' => 'required', 
+                'email' => 'required|email|unique:users,email',
+                'username' => 'required|unique:users,username', 'gender' => 'required|string', 'phone_number' => 
+                'required|string|unique:staff,phone_number|min:10|max:13']), ['password' => 'test']));
+
+            $user_id = $saved->id;
+
+            Staff::create(array_merge($request->only('name', 'email', 'phone_number', 'gender', 'position', 'status', 
+                'joining_date'), ['picture' => $imageName, 'created_by' => $created_by, 'id_number' => $id_number, 
+                'user_id' => $user_id] ));
+        }
 
         return redirect()->route('staffs.index')->withSuccess(__('Staff created successfully.'));
     }

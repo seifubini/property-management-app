@@ -1,14 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-//use App\Http\Controllers\HomeController;
-//use App\Http\Controllers\RegisterController;
-//use App\Http\Controllers\LoginController;
-//use App\Http\Controllers\LogoutController;
-//use App\Http\Controllers\PermissionsController;
-//use App\Http\Controllers\PostsController;
-//use App\Http\Controllers\UsersController;
-//use App\Http\Controllers\RolesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -94,10 +86,14 @@ Route::group(['namespace' => 'App\Http\Controllers'], function(){
         Route::resource('vendors', VendorController::class);
         Route::resource('agents', AgentController::class);
         Route::resource('staffs', StaffController::class);
+        Route::resource('posts', PostsController::class);
         Route::resource('services', ServiceController::class);
+        Route::resource('inspections', InspectionController::class);
         Route::resource('service_packages', ServicePackageController::class);
         Route::resource('cases', CaseController::class);
         Route::resource('quotations', QuotationController::class);
+        Route::get('/get_inspections', 'InspectionController@get_inspections')->name('inspections.get_inspections');
+        Route::get('/edit_inspection/{id}', 'InspectionController@edit')->name('inspections.edit');
         Route::get('/submit_quotation/{id}', 'QuotationController@create_quotation')->name('quotations.submit_quotation');
         Route::resource('jobs', JobController::class);
         Route::resource('permissions', PermissionsController::class);

@@ -34,7 +34,9 @@ class VendorController extends Controller
      */
     public function create()
     {
-        return view('Admin.Vendors.create');
+        $users = User::All();
+
+        return view('Admin.Vendors.create', compact('users'));
     }
 
     /**
@@ -43,7 +45,7 @@ class VendorController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(User $user,StoreUserRequest $request)
+    public function store(User $user,Request $request)
     {
         if($request->hasFile('picture'))
         {
@@ -59,16 +61,44 @@ class VendorController extends Controller
             $imageName = "";
         }
 
-        $saved = $user->create(array_merge($request->validate(['name' => 'required', 'email' => 'required|email|unique:users,email',
-            'username' => 'required|unique:users,username', 'company_name' => 'required|string', 'phone_number' => 
-            'required|string|unique:customers,phone_number|min:10|max:13']), ['password' => 'test']));
+        if($request->user_id != "")
+        {
+            $request->validate([
+                'phone_number' => 'required|string|unique:vendors,phone_number|min:10|max:13', 
+                'company_name' => 'required|string', 
+            ]);
 
-        $user_id = $saved->id;
-        $created_by = Auth::user()->id;
+            $user = User::where('id', $request->user_id)->first();
 
-        Vendor::create(array_merge($request->only('name', 'email', 'phone_number', 'company_name'), ['picture' => $imageName, 
-            'created_by' => $created_by, 'user_id' => $user_id]
-        ));
+            $user_id = $request->user_id;
+            $created_by = Auth::user()->id;
+
+            Vendor::create(array_merge($request->only('phone_number', 'company_name'), ['picture' => $imageName, 
+                'name' => $user->name, 'email' => $user->email, 'created_by' => $created_by, 'user_id' => $user_id]
+            ));
+        }
+        else
+        {
+            $request->validate([
+                'name' => 'required', 
+                'email' => 'required|email|unique:users,email',
+                'username' => 'required|unique:users,username', 
+                'company_name' => 'required|string', 
+                'phone_number' => 'required|string|unique:vendors,phone_number|min:10|max:13' 
+            ]);
+
+            $saved = $user->create(array_merge($request->validate(['name' => 'required', 
+                'email' => 'required|email|unique:users,email',
+                'username' => 'required|unique:users,username', 'gender' => 'required|string', 'phone_number' => 
+                'required|string|unique:vendors,phone_number|min:10|max:13']), ['password' => 'test']));
+
+            $user_id = $saved->id;
+            $created_by = Auth::user()->id;
+
+            Vendor::create(array_merge($request->only('name', 'email', 'phone_number', 'company_name'), ['picture' => $imageName, 
+                'created_by' => $created_by, 'user_id' => $user_id]
+            ));
+        }
 
         return redirect()->route('vendors.index')->withSuccess(__('Vendor created successfully.'));
     }
